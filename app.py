@@ -2,7 +2,7 @@ import streamlit as st
 from textblob import TextBlob
 from googletrans import Translator
 
-
+translator = Translator()
 st.title('Uso de textblob')
 
 st.subheader("Por favor escribe en el campo de texto la frase que deseas analizar")
@@ -17,14 +17,14 @@ with st.sidebar:
 
                  """
                ) 
-translator = Translator()
+
 
 with st.expander('Analizar Polaridad y Subjetividad en un texto'):
     text1 = st.text_area('Escribe por favor: ')
     if text1:
 
-        translation = translator.translate(text1, src="es", dest="en")
-        trans_text = translation.text
+        #translation = translator.translate(text1, src="es", dest="en")
+        #trans_text = translation.text
         #blob = TextBlob(trans_text)
         blob = TextBlob(text1)
        
