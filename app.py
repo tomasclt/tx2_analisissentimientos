@@ -16,8 +16,7 @@ with st.expander('Analizar texto'):
         translation = translator.translate(text1, src="es", dest="en")
         trans_text = translation.text
         blob = TextBlob(trans_text)
-        blob2=TextBlob(text2)
-        st.write((blob2.correct())) 
+        
        
         
         st.write('Polarity: ', round(blob.sentiment.polarity,2))
@@ -30,7 +29,8 @@ with st.expander('Analizar texto'):
         else:
             st.write( 'Es un sentimiento Neutral 😐')
 
-with st.expander('Analizar texto'):
+with st.expander('Corrección en inglés'):
        text2 = st.text_area('Escribe por favor: ',key='4')
-#    if text2:
-
+    if text2:
+       blob2=TextBlob(text2)
+       st.write((blob2.correct())) 
