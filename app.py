@@ -3,9 +3,7 @@ from textblob import TextBlob
 from googletrans import Translator
 
 
-subprocess.run([f"{sys.executable}", "corpora.py"]) 
-
-st.title('Análisis de Sentimiento')
+st.title('Uso de textblob')
 
 st.subheader("Por favor escribe en el campo de texto la frase que deseas analizar")
 
