@@ -30,7 +30,7 @@ with st.expander('Analizar texto'):
         else:
             st.write( 'Es un sentimiento Neutral 😐')
 
-#with st.expander('Analizar texto',key=3):
+with st.expander('Analizar texto',key='2'):
 #    text2 = st.text_area('Escribe por favor: ',key=4)
 #    if text2:
 
