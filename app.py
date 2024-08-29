@@ -18,6 +18,7 @@ with st.expander('Analizar texto'):
         translation = translator.translate(text, src="es", dest="en")
         trans_text = translation.text
         blob = TextBlob(trans_text)
+        st.write(blob.tags) 
         st.write('Polarity: ', round(blob.sentiment.polarity,2))
         st.write('Subjectivity: ', round(blob.sentiment.subjectivity,2))
         x=round(blob.sentiment.polarity,2)
@@ -27,3 +28,5 @@ with st.expander('Analizar texto'):
             st.write( 'Es un sentimiento Negativo 😔')
         else:
             st.write( 'Es un sentimiento Neutral 😐')
+
+     
