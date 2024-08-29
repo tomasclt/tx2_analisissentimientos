@@ -9,7 +9,7 @@ st.subheader("Por favor escribe en el campo de texto la frase que deseas analiza
 
 translator = Translator()
 
-with st.expander('Analizar texto'):
+with st.expander('Analizar texto',key=1):
     text1 = st.text_area('Escribe por favor: ',key=1)
     if text1:
 
@@ -17,8 +17,7 @@ with st.expander('Analizar texto'):
         trans_text = translation.text
         blob = TextBlob(trans_text)
         
-        blob2=TextBlob("this is a phrse")
-        st.write((blob2.correct())) 
+       
         
         st.write('Polarity: ', round(blob.sentiment.polarity,2))
         st.write('Subjectivity: ', round(blob.sentiment.subjectivity,2))
@@ -30,4 +29,8 @@ with st.expander('Analizar texto'):
         else:
             st.write( 'Es un sentimiento Neutral 😐')
 
-     
+with st.expander('Analizar texto',key=2):
+    text2 = st.text_area('Escribe por favor: ',key=1)
+    if text2:
+        blob2=TextBlob(text2)
+        st.write((blob2.correct())) 
