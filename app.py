@@ -13,7 +13,7 @@ with st.sidebar("""
                Subjetividad: Mide cuánto del contenido es subjetivo (opiniones, emociones, creencias) frente a objetivo
                (hechos). Va de 0 a 1, donde 0 es completamente objetivo y 1 es completamente subjetivo.
 
-                 """"
+                 """
                ) 
 translator = Translator()
 
