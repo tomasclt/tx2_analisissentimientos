@@ -1,19 +1,12 @@
-import corpora
-from textblob import TextBlob
-import pandas as pd
 import streamlit as st
-#import nltk_download.py
-from PIL import Image
+from textblob import TextBlob
 from googletrans import Translator
-import subprocess
-import sys
-import nltk
+
 
 subprocess.run([f"{sys.executable}", "corpora.py"]) 
 
 st.title('Análisis de Sentimiento')
-#image = Image.open('emoticones.jpg')
-#st.image(image)
+
 st.subheader("Por favor escribe en el campo de texto la frase que deseas analizar")
 
 translator = Translator()
