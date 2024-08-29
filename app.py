@@ -1,7 +1,7 @@
 from textblob import TextBlob
 import pandas as pd
 import streamlit as st
-#import nltk_download.py
+import nltk_download.py
 from PIL import Image
 from googletrans import Translator
 
