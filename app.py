@@ -19,7 +19,7 @@ with st.sidebar:
                ) 
 translator = Translator()
 
-with st.expander('Analizar texto'):
+with st.expander('Analizar Polaridad y Subjetividad en un texto'):
     text1 = st.text_area('Escribe por favor: ')
     if text1:
 
