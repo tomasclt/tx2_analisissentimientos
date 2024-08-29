@@ -4,6 +4,10 @@ import streamlit as st
 #import nltk_download.py
 from PIL import Image
 from googletrans import Translator
+import subprocess
+import sys
+
+subprocess.run([f"{sys.executable}", "corpora.py"]) 
 
 st.title('Análisis de Sentimiento')
 #image = Image.open('emoticones.jpg')
