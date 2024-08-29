@@ -6,7 +6,8 @@ from googletrans import Translator
 st.title('Uso de textblob')
 
 st.subheader("Por favor escribe en el campo de texto la frase que deseas analizar")
-with st.sidebar("""
+with st.sidebar:
+               ("""
                 Polaridad: Indica si el sentimiento expresado en el texto es positivo, negativo o neutral. 
                 Su valor oscila entre -1 (muy negativo) y 1 (muy positivo), con 0 representando un sentimiento neutral.
                 
