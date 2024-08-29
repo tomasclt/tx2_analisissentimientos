@@ -20,7 +20,7 @@ with st.expander('Analizar texto'):
         blob = TextBlob(trans_text)
         blob2=TextBlob("this is a phrse")
         st.write((blob2.correct())) 
-        st.write((blob2.words())) 
+        
         st.write('Polarity: ', round(blob.sentiment.polarity,2))
         st.write('Subjectivity: ', round(blob.sentiment.subjectivity,2))
         x=round(blob.sentiment.polarity,2)
