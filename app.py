@@ -7,6 +7,7 @@ from PIL import Image
 from googletrans import Translator
 import subprocess
 import sys
+import nltk
 
 subprocess.run([f"{sys.executable}", "corpora.py"]) 
 
