@@ -9,7 +9,7 @@ from googletrans import Translator
 st.set_page_config(page_title="Análisis de Sentimiento", page_icon="🧠", layout="centered")
 
 # ------------------------------
-# Estilos (Dark theme alto contraste, mejorado)
+# Estilos (Dark theme alto contraste, fixes globales de legibilidad)
 # ------------------------------
 st.markdown("""
 <style>
@@ -23,6 +23,7 @@ st.markdown("""
   --pos:#10b981; --neu:#60a5fa; --neg:#ef4444;
 }
 
+/* Fondo base y tipografía */
 [data-testid="stAppViewContainer"]{
   background: linear-gradient(180deg,var(--bgA) 0%,var(--bgB) 100%) !important;
   color: var(--text) !important;
@@ -32,93 +33,74 @@ html, body{
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 }
 main .block-container{max-width:900px; padding-top:2rem; padding-bottom:3rem;}
-
 h1,h2,h3{letter-spacing:-.01em; color:#f9fafb !important;}
-[data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] *, label, label *{
-  color:var(--text) !important; opacity:1 !important;
+
+/* ======= FIX MAS IMPORTANTE: nada “apagadito” en markdown / expander / sidebar ======= */
+[data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] *,
+[data-testid="stExpander"] *,  /* TODO dentro de expanders */
+section[data-testid="stSidebar"] * {
+  color: var(--text) !important;
+  opacity: 1 !important;          /* nunca transparente */
 }
 
+/* Enlaces legibles */
+a, a:visited { color:#93c5fd !important; text-decoration: none; }
+a:hover { color:#bfdbfe !important; text-decoration: underline; }
+
+/* Tarjeta */
 .card{background:var(--panel); border:1px solid var(--panel-border); border-radius:var(--radius);
       box-shadow:0 18px 50px rgba(0,0,0,.45); padding:18px 20px;}
 
-/* --------------------------
-   Inputs con transiciones
---------------------------- */
-.stTextArea textarea,
-.stTextInput input{
-  background:var(--input) !important;
-  border:1px solid var(--input-border) !important;
-  color:var(--text) !important;
-  border-radius:12px !important;
-  transition: all 0.25s ease;
+/* Inputs con transiciones y contraste */
+.stTextArea textarea, .stTextInput input{
+  background:var(--input) !important; border:1px solid var(--input-border) !important;
+  color:var(--text) !important; border-radius:12px !important; transition: all 0.25s ease;
 }
-
-/* Hover (mantiene contraste) */
-.stTextArea textarea:hover,
-.stTextInput input:hover {
-  background:#1a2234 !important;
-  border-color:#3b82f6 !important;
-  color:var(--text) !important;
-}
-
-/* Focus (clic dentro) */
-.stTextArea textarea:focus,
-.stTextInput input:focus {
-  background:#0d1829 !important;
-  color:#f8fafc !important;
-  border-color:var(--focus) !important;
-  outline:none !important;
+.stTextArea textarea:hover, .stTextInput input:hover { background:#1a2234 !important; border-color:#3b82f6 !important; }
+.stTextArea textarea:focus, .stTextInput input:focus {
+  background:#0d1829 !important; color:#f8fafc !important;
+  border-color:var(--focus) !important; outline:none !important;
   box-shadow:0 0 0 2px rgba(34,211,238,.25);
 }
+.stTextArea textarea::placeholder, .stTextInput input::placeholder{ color:#94a3b8 !important; }
 
-/* Placeholder visible */
-.stTextArea textarea::placeholder,
-.stTextInput input::placeholder{
-  color:#94a3b8 !important;
-  opacity:1 !important;
-}
+/* Radio/checkbox visibles */
+input[type="radio"], input[type="checkbox"]{ accent-color: var(--primaryA) !important; }
 
-/* --------------------------
-   Botones
---------------------------- */
+/* Botones */
 .stButton > button, .stDownloadButton > button{
-  border-radius:999px;
-  padding:.72rem 1.15rem;
-  border:1px solid var(--panel-border);
+  border-radius:999px; padding:.72rem 1.15rem; border:1px solid var(--panel-border);
   background:linear-gradient(90deg,var(--primaryA),var(--primaryB)) !important;
-  color:#fff !important;
-  box-shadow:0 14px 36px rgba(37,99,235,.35);
+  color:#fff !important; box-shadow:0 14px 36px rgba(37,99,235,.35);
   transition:transform .15s ease, box-shadow .15s ease;
 }
 .stButton > button:hover{transform:translateY(-1px); box-shadow:0 18px 48px rgba(37,99,235,.45);}
 
-/* --------------------------
-   Sidebar
---------------------------- */
-section[data-testid="stSidebar"] > div:first-child{
-  background:#0c1324;
-  border-right:1px solid var(--panel-border);
-}
-section[data-testid="stSidebar"] *{color:var(--text) !important;}
+/* Sidebar */
+section[data-testid="stSidebar"] > div:first-child{background:#0c1324; border-right:1px solid var(--panel-border);}
 
-/* --------------------------
-   Chips de estado
---------------------------- */
+/* Chips de estado */
 .badge{display:inline-block; padding:.25rem .6rem; border-radius:999px; font-weight:600; font-size:.8rem;}
 .badge-pos{background:rgba(16,185,129,.15); color:#86efac; border:1px solid rgba(16,185,129,.35);}
 .badge-neu{background:rgba(96,165,250,.12); color:#93c5fd; border:1px solid rgba(96,165,250,.35);}
 .badge-neg{background:rgba(239,68,68,.14); color:#fca5a5; border:1px solid rgba(239,68,68,.35);}
 
-/* --------------------------
-   Barras visuales
---------------------------- */
+/* Barras */
 .bar{height:10px; width:100%; background:#0f172a; border:1px solid #334155; border-radius:999px; overflow:hidden;}
 .bar > div{height:100%;}
+
+/* key-value para números (evita pastillas blancas) */
+.kv{ display:flex; align-items:center; gap:.75rem; margin:.35rem 0; }
+.kv .k{ color:var(--text); font-weight:600; }
+.kv .v{
+  background:#0f172a; border:1px solid #334155; color:#f8fafc;
+  padding:.25rem .6rem; border-radius:10px; font-variant-numeric: tabular-nums;
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ------------------------------
-# App
+# App (misma arquitectura y lógica)
 # ------------------------------
 translator = Translator()
 st.title('🧠 Uso de TextBlob')
@@ -144,9 +126,11 @@ with st.expander('Analizar Polaridad y Subjetividad en un texto'):
         pol = round(blob.sentiment.polarity, 2)
         sub = round(blob.sentiment.subjectivity, 2)
 
-        st.write('Polarity:', pol)
-        st.write('Subjectivity:', sub)
+        # Valores legibles en pastillas oscuras
+        st.markdown(f'<div class="kv"><div class="k">Polarity:</div><div class="v">{pol}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="kv"><div class="k">Subjectivity:</div><div class="v">{sub}</div></div>', unsafe_allow_html=True)
 
+        # Chip de estado
         if pol >= 0.5:
             st.markdown('<span class="badge badge-pos">Sentimiento Positivo 😊</span>', unsafe_allow_html=True)
         elif pol <= -0.5:
@@ -169,6 +153,7 @@ with st.expander('Analizar Polaridad y Subjetividad en un texto'):
         with st.expander("Ver texto traducido (EN)"):
             st.code(trans_text, language="text")
 
+        # Mensaje final
         if pol >= 0.5:
             st.write('Es un sentimiento Positivo 😊')
         elif pol <= -0.5:
@@ -181,4 +166,3 @@ with st.expander('Corrección en inglés'):
     if text2:
         blob2 = TextBlob(text2)
         st.write((blob2.correct()))
-
