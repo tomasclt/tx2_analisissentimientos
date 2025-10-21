@@ -9,7 +9,7 @@ from googletrans import Translator
 st.set_page_config(page_title="Análisis de Sentimiento", page_icon="🧠", layout="centered")
 
 # ------------------------------
-# Estilos (Dark theme alto contraste, fixes globales de legibilidad)
+# Estilos (Dark theme alto contraste + fixes de legibilidad)
 # ------------------------------
 st.markdown("""
 <style>
@@ -23,7 +23,6 @@ st.markdown("""
   --pos:#10b981; --neu:#60a5fa; --neg:#ef4444;
 }
 
-/* Fondo base y tipografía */
 [data-testid="stAppViewContainer"]{
   background: linear-gradient(180deg,var(--bgA) 0%,var(--bgB) 100%) !important;
   color: var(--text) !important;
@@ -35,23 +34,27 @@ html, body{
 main .block-container{max-width:900px; padding-top:2rem; padding-bottom:3rem;}
 h1,h2,h3{letter-spacing:-.01em; color:#f9fafb !important;}
 
-/* ======= FIX MAS IMPORTANTE: nada “apagadito” en markdown / expander / sidebar ======= */
+/* Nada “apagadito” nunca */
 [data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] *,
-[data-testid="stExpander"] *,  /* TODO dentro de expanders */
 section[data-testid="stSidebar"] * {
   color: var(--text) !important;
-  opacity: 1 !important;          /* nunca transparente */
+  opacity: 1 !important;
 }
 
-/* Enlaces legibles */
-a, a:visited { color:#93c5fd !important; text-decoration: none; }
-a:hover { color:#bfdbfe !important; text-decoration: underline; }
+/* Evitar code-tags claros (ej. los ceros se veían en caja blanca) */
+code, kbd, samp {
+  background: #0f172a !important;
+  color: var(--text) !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px;
+  padding: .05rem .3rem;
+}
 
-/* Tarjeta */
+/* Tarjetas */
 .card{background:var(--panel); border:1px solid var(--panel-border); border-radius:var(--radius);
       box-shadow:0 18px 50px rgba(0,0,0,.45); padding:18px 20px;}
 
-/* Inputs con transiciones y contraste */
+/* Inputs */
 .stTextArea textarea, .stTextInput input{
   background:var(--input) !important; border:1px solid var(--input-border) !important;
   color:var(--text) !important; border-radius:12px !important; transition: all 0.25s ease;
@@ -89,7 +92,7 @@ section[data-testid="stSidebar"] > div:first-child{background:#0c1324; border-ri
 .bar{height:10px; width:100%; background:#0f172a; border:1px solid #334155; border-radius:999px; overflow:hidden;}
 .bar > div{height:100%;}
 
-/* key-value para números (evita pastillas blancas) */
+/* key-value para números */
 .kv{ display:flex; align-items:center; gap:.75rem; margin:.35rem 0; }
 .kv .k{ color:var(--text); font-weight:600; }
 .kv .v{
@@ -100,69 +103,69 @@ section[data-testid="stSidebar"] > div:first-child{background:#0c1324; border-ri
 """, unsafe_allow_html=True)
 
 # ------------------------------
-# App (misma arquitectura y lógica)
+# App (misma lógica, SIN expanders)
 # ------------------------------
 translator = Translator()
 st.title('🧠 Uso de TextBlob')
 
 st.subheader("Por favor escribe en el campo de texto la frase que deseas analizar")
 
+# Sidebar (texto sin backticks para que no genere cajas)
 with st.sidebar:
     st.subheader("Polaridad y Subjetividad")
     st.markdown(
         "**Polaridad**: valor entre **-1** (muy negativo) y **1** (muy positivo). "
-        "`0` ≈ neutral.\n\n"
+        "Cero representa sentimiento **neutral**.\n\n"
         "**Subjetividad**: valor entre **0** (objetivo) y **1** (muy subjetivo)."
     )
 
-with st.expander('Analizar Polaridad y Subjetividad en un texto'):
-    text1 = st.text_area('Escribe por favor: ')
-    if text1:
-        # Traducción ES → EN
-        translation = translator.translate(text1, src="es", dest="en")
-        trans_text = translation.text
+# ===== Sección 1: Análisis visible siempre =====
+st.markdown('<div class="card">', unsafe_allow_html=True)
+st.subheader('Analizar Polaridad y Subjetividad en un texto')
+text1 = st.text_area('Escribe por favor:')
+if text1:
+    # Traducción ES → EN
+    translation = translator.translate(text1, src="es", dest="en")
+    trans_text = translation.text
 
-        blob = TextBlob(trans_text)
-        pol = round(blob.sentiment.polarity, 2)
-        sub = round(blob.sentiment.subjectivity, 2)
+    blob = TextBlob(trans_text)
+    pol = round(blob.sentiment.polarity, 2)
+    sub = round(blob.sentiment.subjectivity, 2)
 
-        # Valores legibles en pastillas oscuras
-        st.markdown(f'<div class="kv"><div class="k">Polarity:</div><div class="v">{pol}</div></div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="kv"><div class="k">Subjectivity:</div><div class="v">{sub}</div></div>', unsafe_allow_html=True)
+    # Valores legibles
+    st.markdown(f'<div class="kv"><div class="k">Polarity:</div><div class="v">{pol}</div></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="kv"><div class="k">Subjectivity:</div><div class="v">{sub}</div></div>', unsafe_allow_html=True)
 
-        # Chip de estado
-        if pol >= 0.5:
-            st.markdown('<span class="badge badge-pos">Sentimiento Positivo 😊</span>', unsafe_allow_html=True)
-        elif pol <= -0.5:
-            st.markdown('<span class="badge badge-neg">Sentimiento Negativo 😔</span>', unsafe_allow_html=True)
-        else:
-            st.markdown('<span class="badge badge-neu">Sentimiento Neutral 😐</span>', unsafe_allow_html=True)
+    # Chip de estado
+    if pol >= 0.5:
+        st.markdown('<span class="badge badge-pos">Sentimiento Positivo 😊</span>', unsafe_allow_html=True)
+    elif pol <= -0.5:
+        st.markdown('<span class="badge badge-neg">Sentimiento Negativo 😔</span>', unsafe_allow_html=True)
+    else:
+        st.markdown('<span class="badge badge-neu">Sentimiento Neutral 😐</span>', unsafe_allow_html=True)
 
-        # Barras visuales
-        st.markdown("###### Intensidad de Polaridad")
-        pol_pct = int((pol + 1) * 50)
-        pol_color = "var(--pos)" if pol > 0.05 else ("var(--neg)" if pol < -0.05 else "var(--neu)")
-        st.markdown(f'''<div class="bar"><div style="width:{pol_pct}%; background:{pol_color};"></div></div>''', unsafe_allow_html=True)
-        st.caption(f"Escala centrada en 0 (neutral). Valor actual: {pol}")
+    # Barras visuales
+    st.markdown("###### Intensidad de Polaridad")
+    pol_pct = int((pol + 1) * 50)
+    pol_color = "var(--pos)" if pol > 0.05 else ("var(--neg)" if pol < -0.05 else "var(--neu)")
+    st.markdown(f'''<div class="bar"><div style="width:{pol_pct}%; background:{pol_color};"></div></div>''', unsafe_allow_html=True)
+    st.caption(f"Escala centrada en 0 (neutral). Valor actual: {pol}")
 
-        st.markdown("###### Subjetividad")
-        sub_pct = int(sub * 100)
-        st.markdown(f'''<div class="bar"><div style="width:{sub_pct}%; background:var(--primaryA);"></div></div>''', unsafe_allow_html=True)
-        st.caption(f"0 = objetivo • 1 = muy subjetivo. Valor actual: {sub}")
+    st.markdown("###### Subjetividad")
+    sub_pct = int(sub * 100)
+    st.markdown(f'''<div class="bar"><div style="width:{sub_pct}%; background:var(--primaryA);"></div></div>''', unsafe_allow_html=True)
+    st.caption(f"0 = objetivo • 1 = muy subjetivo. Valor actual: {sub}")
 
-        with st.expander("Ver texto traducido (EN)"):
-            st.code(trans_text, language="text")
+    # Texto traducido (siempre visible pero en code oscuro, sin hover necesario)
+    st.markdown("**Texto analizado (EN):**")
+    st.code(trans_text, language="text")
+st.markdown('</div>', unsafe_allow_html=True)
 
-        # Mensaje final
-        if pol >= 0.5:
-            st.write('Es un sentimiento Positivo 😊')
-        elif pol <= -0.5:
-            st.write('Es un sentimiento Negativo 😔')
-        else:
-            st.write('Es un sentimiento Neutral 😐')
-
-with st.expander('Corrección en inglés'):
-    text2 = st.text_area('Escribe por favor:', key='4')
-    if text2:
-        blob2 = TextBlob(text2)
-        st.write((blob2.correct()))
+# ===== Sección 2: Corrección en inglés (visible siempre) =====
+st.markdown('<div class="card">', unsafe_allow_html=True)
+st.subheader('Corrección en inglés')
+text2 = st.text_area('Escribe por favor:', key='4')
+if text2:
+    blob2 = TextBlob(text2)
+    st.write(blob2.correct())
+st.markdown('</div>', unsafe_allow_html=True)
